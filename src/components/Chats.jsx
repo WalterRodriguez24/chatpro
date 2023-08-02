@@ -88,6 +88,22 @@ const Chats = () => {
     },
   ];
 
+  
+const Node = ({ node, updateNode }) => {
+  const [localNode, setLocalNode] = useState(node);
+
+  const handleChange = (event, key) => {
+    const newLocalNode = {
+      ...localNode,
+      [key]: event.target.value,
+    };
+    setLocalNode(newLocalNode);
+    updateNode(newLocalNode);
+  };
+}
+
+
+
   const [conversationFlow, setConversationFlow] = useState({ nodes: [] });
   // Function to generate a unique ID
   const generateNodeId = () => {
@@ -169,6 +185,29 @@ const Chats = () => {
   //   return <h1>vjndjvn</h1>;
   // }
 
+  const Flow = ({ flow }) => (
+    <div>
+      {flow.nodes.map((node) => (
+        <Node
+          key={node.id}
+          node={node}
+          updateNode={() => {
+            /* actualizar en el estado global o donde sea necesario */
+          }}
+        />
+      ))}
+    </div>
+  );
+  
+  const Chat = ({ chat }) => (
+    <div>
+      {chat.map((chatItem) => (
+        <Flow key={chatItem.name} flow={chatItem.flow} />
+      ))}
+    </div>
+  )
+
+
   return (
     <Box
       sx={{
@@ -190,20 +229,38 @@ const Chats = () => {
         <TextField
           fullWidth
           label="Pregunta"
-          onChange={()=> validacion()}
           // defaultValue={chatpro.pregunta}
+          value={localNode.question}
           variant="standard"
           margin="normal"
+          onChange={(e) => handleChange(e, 'question')}
         />
         <TextField
           fullWidth
           // defaultValue={chatpro.entrada}
           label="Entrada"
-          onChange={()=> validacion()}
+          onChange={(e) => handleChange(e, 'entry')}
+          value={localNode.entry}
           variant="standard"
           margin="normal"
-        />
+          />
+          {localNode.responses.map((response, index) => (
+            <Node
+              key={response.id}
+              node={response}
+              updateNode={(newNode) =>
+                setLocalNode((prev) => {
+                  const newResponses = [...prev.responses];
+                  newResponses[index] = newNode;
+                  return { ...prev, responses: newResponses };
+                })
+              }
+            />
+          ))}
       </Box>
+      
+
+      
 
       {conversationFlow.nodes.responses instanceof Array &&
         conversationFlow.nodes.responses.map((resp) => (
@@ -296,7 +353,9 @@ const Chats = () => {
         </Button>
       </Stack>
     </Box>
+    
   );
+  
 };
 
 export default Chats;

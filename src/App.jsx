@@ -10,8 +10,8 @@ function App () {
 
   return(
 
-    //  <Chats/>
-    <Mainmenu/>
+     <Chats/>
+    // <Mainmenu/>
 
 
   );
