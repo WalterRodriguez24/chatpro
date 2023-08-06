@@ -1,98 +1,24 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { chatData } from "../data/chatData";
 
 const Chats = () => {
-  // const [chatpro, setChatpro] = useState();
-  const chat = [    
-    {
-      name: "asdasd",
-      flow: {
-        nodes: [
-          {
-            id: "lkobes9teswuq8kyouf",
-            type: "main",
-            question: "asdasdads",
-            entry: "asdasd",
-            responses: [
-              {
-                id: "lkobeu4ph2tax2avnz",
-                type: "response",
-                question: "asdasd",
-                entry: "asdasd",
-                responses: [
-                  {
-                    id: "lkobevm9dggrf3cz4yp",
-                    type: "response",
-                    question: "asdasd",
-                    entry: "asdasd",
-                    responses: [
-                      {
-                        id: "lkobexbdsyhktgqgzqp",
-                        type: "response",
-                        question: "entry",
-                        responses: [],
-                        parentId: "lkobevm9dggrf3cz4yp",
-                        showResponses: true,
-                      },
-                    ],
-                    parentId: "lkobeu4ph2tax2avnz",
-                    showResponses: true,
-                  },
-                ],
-                parentId: "lkobes9teswuq8kyouf",
-                showResponses: true,
-              },
-              {
-                id: "lkobeygpkgc7xi9yfr",
-                type: "response",
-                question: "asdasdasd",
-                entry: "asdasd",
-                responses: [],
-                parentId: "lkobes9teswuq8kyouf",
-                showResponses: true,
-              },
-              {
-                id: "lkobf16pnphdr0yru1",
-                type: "response",
-                question: "asdasd",
-                entry: "asdasd",
-                responses: [],
-                parentId: "lkobes9teswuq8kyouf",
-                showResponses: true,
-              },
-              {
-                id: "lkobf3416mu8c4bihba",
-                type: "response",
-                question: "asdasd",
-                entry: "asdasd",
-                responses: [],
-                parentId: "lkobes9teswuq8kyouf",
-                showResponses: true,
-              },
-            ],
-            showResponses: true,
-          },
-          {
-            id: "lkobf5m9blosppllffm",
-            type: "main",
-            question: "asdasd",
-            entry: "asdasd",
-            responses: [],
-            showResponses: true,
-          },
-        ],
-      },
-    },
-  ];
-
-  
-  
-
+  const marginLeftByResponse = 20;
   const [conversationFlow, setConversationFlow] = useState({ nodes: [] });
-  // Function to generate a unique ID
+  const [chatFlow, setChatFlow] = useState([]);
+  const [dataQuestion, setDataQuestion] = useState({
+    question: "",
+    entry: "",
+  });
+
+  useEffect(() => {
+    setChatFlow(chatData[0]);
+  }, []);
+
   const generateNodeId = () => {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   };
@@ -150,27 +76,23 @@ const Chats = () => {
       }),
     }));
   };
-  
 
-
-
-
-
-  const validacion =()=> {
-    if( question.trim() ==""
-    || question==="" || entry.trim()=="" || entry===""){
-      return
+  const validacion = () => {
+    if (
+      dataQuestion.question.trim() == "" ||
+      dataQuestion.question === "" ||
+      dataQuestion.entry.trim() == "" ||
+      dataQuestion.entry === ""
+    ) {
+      return;
     }
-    addNode()
-    console.log(conversationFlow)
-  }
+    addNode();
+    console.log(conversationFlow);
+  };
 
-  // useEffect(() => {
-  //   setChatpro(chat);
-  // }, []);
-  // if (!chatpro) {
-  //   return <h1>vjndjvn</h1>;
-  // }
+  if (chatFlow.length === 0) {
+    return <h1>Cargando...</h1>;
+  }
 
   return (
     <Box
@@ -193,60 +115,109 @@ const Chats = () => {
         <TextField
           fullWidth
           label="Pregunta"
-          onChange={()=> validacion()}
-          // defaultValue={chatpro.pregunta}
+          onChange={() => setDataQuestion({ ...dataQuestion, question: "" })}
+          defaultValue={chatFlow.flow.nodes[0].question}
           variant="standard"
           margin="normal"
         />
         <TextField
           fullWidth
-          // defaultValue={chatpro.entrada}
           label="Entrada"
-          onChange={()=> validacion()}
+          onChange={() => setDataQuestion({ ...dataQuestion, entry: "" })}
+          defaultValue={chatFlow.flow.nodes[0].entry}
           variant="standard"
           margin="normal"
         />
       </Box>
 
-      {conversationFlow.nodes.responses instanceof Array &&
-        conversationFlow.nodes.responses.map((resp) => (
-          <Box
-            key={resp.id}
-            sx={{
-              marginBottom: "20px",
-              borderBottom: "1px solid #ccc",
-              paddingBottom: "10px",
+      {chatFlow.flow.nodes[0].responses instanceof Array &&
+        chatFlow.flow.nodes[0].responses.map((resp) => (
+          <>
+            <Box
+              key={resp.id}
+              sx={{
+                marginBottom: "20px",
+                borderBottom: "1px solid #ccc",
+                paddingBottom: "10px",
+                marginLeft: `${marginLeftByResponse}px`,
 
-              width: 500,
-              maxWidth: "100%",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              padding: "20px",
-              left: "20",
-            }}
-          >
-            <TextField
-              fullWidth
-              label="Respuesta"
-              defaultValue={resp.respuesta}
-              variant="standard"
-              margin="normal"
-            />
-            <TextField
-              fullWidth
-              defaultValue={resp.entrada}
-              label="Entrada"
-              variant="standard"
-              margin="normal"
-            />
+                width: 500,
+                maxWidth: "100%",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                padding: "20px",
+                left: "20",
+              }}
+            >
+              <TextField
+                fullWidth
+                label="Respuesta"
+                defaultValue={resp.question}
+                variant="standard"
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                defaultValue={resp.entry}
+                label="Entrada"
+                variant="standard"
+                margin="normal"
+              />
 
-            <Stack spacing={2} marginTop={2}>
-              <Button variant="outlined" color="error">
-                Eliminar respuestas
-              </Button>
-              <Button onClick={addNode} variant="outlined">Agregar respuesta anidada</Button>
-            </Stack>
-          </Box>
+              <Stack spacing={2} marginTop={2}>
+                <Button variant="outlined" color="error">
+                  Eliminar respuestas
+                </Button>
+                <Button onClick={addNode} variant="outlined">
+                  Agregar respuesta anidada
+                </Button>
+              </Stack>
+            </Box>
+
+            {chatFlow.flow.nodes[0].responses instanceof Array &&
+              chatFlow.flow.nodes[0].responses[0].responses.map((resp) => (
+                <Box
+                  key={resp.id}
+                  sx={{
+                    marginBottom: "20px",
+                    borderBottom: "1px solid #ccc",
+                    paddingBottom: "10px",
+                    marginLeft: `${marginLeftByResponse * 2}px`,
+
+                    width: 500,
+                    maxWidth: "100%",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "20px",
+                    left: "20",
+                  }}
+                >
+                  <TextField
+                    fullWidth
+                    label="Respuesta"
+                    defaultValue={resp.question}
+                    variant="standard"
+                    margin="normal"
+                  />
+                  <TextField
+                    fullWidth
+                    defaultValue={resp.entry}
+                    label="Entrada"
+                    variant="standard"
+                    margin="normal"
+                  />
+
+                  <Stack spacing={2} marginTop={2}>
+                    <Button variant="outlined" color="error">
+                      Eliminar respuestas
+                    </Button>
+                    <Button onClick={addNode} variant="outlined">
+                      Agregar respuesta anidada
+                    </Button>
+                  </Stack>
+                </Box>
+              ))}
+          </>
         ))}
 
       <Box
