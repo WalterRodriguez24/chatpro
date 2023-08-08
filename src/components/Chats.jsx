@@ -4,10 +4,22 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import { chatData } from "../data/chatData";
+
+import NodeChat from "./Node";
+import { useChatContext } from "../hooks/useChatContext";
+/**
+ * @typedef Conversation
+ * @property {string} name
+ * @property {number} [age]
+ */
+
+const marginLeftByResponse = 100;
+
+const generateNodeId = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+};
 
 const Chats = () => {
-  const marginLeftByResponse = 20;
   const [conversationFlow, setConversationFlow] = useState({ nodes: [] });
   const [chatFlow, setChatFlow] = useState([]);
   const [dataQuestion, setDataQuestion] = useState({
@@ -15,16 +27,10 @@ const Chats = () => {
     entry: "",
   });
 
-  useEffect(() => {
-    setChatFlow(chatData[0]);
-  }, []);
-
-  const generateNodeId = () => {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  };
+  const { mainNode } = useChatContext();
 
   // Function to add a new node of interaction
-  const addNode = () => {
+  /*  const addNode = () => {
     const nodeId = generateNodeId(); //iscusncjsnij
     const newNode = {
       id: nodeId,
@@ -39,14 +45,14 @@ const Chats = () => {
       nodes: [...prevFlow.nodes, newNode],
     }));
   };
-
+ */
   // Function to delete a node of interaction
-  const deleteNode = (nodeId) => {
+  /*   const deleteNode = (nodeId) => {
     setConversationFlow((prevFlow) => ({
       ...prevFlow,
       nodes: prevFlow.nodes.filter((node) => node.id !== nodeId),
     }));
-  };
+  }; */
 
   // Function to add a response to a node
   const addResponse = (parentNodeId) => {
@@ -76,7 +82,7 @@ const Chats = () => {
       }),
     }));
   };
-
+  /* 
   const validacion = () => {
     if (
       dataQuestion.question.trim() == "" ||
@@ -89,9 +95,9 @@ const Chats = () => {
     addNode();
     console.log(conversationFlow);
   };
-
-  if (chatFlow.length === 0) {
-    return <h1>Cargando...</h1>;
+ */
+  if (!mainNode) {
+    return <h1>No hay respuesta</h1>;
   }
 
   return (
@@ -103,7 +109,11 @@ const Chats = () => {
       }}
     >
       <h1 style={{ marginBottom: "20px" }}>Nodo ID: lko5n0ynh4ot3e33jdr</h1>
-      <Box
+
+      {mainNode.responses.map((resp) => (
+        <NodeChat key={resp.id} node={resp} />
+      ))}
+      {/*    <Box
         sx={{
           width: 500,
           maxWidth: "100%",
@@ -128,9 +138,9 @@ const Chats = () => {
           variant="standard"
           margin="normal"
         />
-      </Box>
+      </Box> */}
 
-      {chatFlow.flow.nodes[0].responses instanceof Array &&
+      {/*  {chatFlow.flow.nodes[0].responses instanceof Array &&
         chatFlow.flow.nodes[0].responses.map((resp) => (
           <>
             <Box
@@ -218,9 +228,6 @@ const Chats = () => {
                 </Box>
               ))}
 
-
-
-
             {chatFlow.flow.nodes[0].responses instanceof Array &&
               chatFlow.flow.nodes[0].responses[0].responses.map((resp) => (
                 <Box
@@ -266,8 +273,8 @@ const Chats = () => {
               ))}
           </>
         ))}
-
-      <Box
+ */}
+      {/*  <Box
         sx={{
           width: 500,
           maxWidth: "100%",
@@ -298,24 +305,25 @@ const Chats = () => {
             Eliminar respuestas
           </Button>
         </Stack>
-      </Box>
+      </Box> */}
 
-      <Stack direction="row" spacing={2} marginTop={3}>
-        <Button variant="outlined">Agregar respuestas</Button>
-        <Button variant="outlined" color="error">
-          Eliminar Nodo
-        </Button>
-        <Button
-          variant="outlined"
-          sx={{
-            bgcolor: "#757575",
-            color: "#fff",
-            "&:hover": { bgcolor: "#616161" },
-          }}
-        >
-          Mostrar respuestas
-        </Button>
-      </Stack>
+      {/*  <Stack direction="row" spacing={2} marginTop={3}>
+          <Button variant="outlined">Agregar respuestas</Button>
+          <Button variant="outlined" color="error" 
+          >
+            Eliminar Nodo
+          </Button>
+          <Button
+            variant="outlined"
+            sx={{
+              bgcolor: "#757575",
+              color: "#fff",
+              "&:hover": { bgcolor: "#616161" },
+            }}
+          >
+            Mostrar respuestas
+          </Button>
+        </Stack> */}
     </Box>
   );
 };
