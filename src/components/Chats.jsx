@@ -98,7 +98,7 @@ const Chats = () => {
     <Box
       sx={{
         border: "1px solid #ccc",
-        borderRadius: "4px",
+        borderRadius: "10px",
         padding: "20px",
       }}
     >
@@ -164,12 +164,12 @@ const Chats = () => {
                 margin="normal"
               />
 
-              <Stack spacing={2} marginTop={2}>
-                <Button variant="outlined" color="error">
-                  Eliminar respuestas
-                </Button>
+              <Stack spacing={2} marginTop={2} direction="row">
                 <Button onClick={addNode} variant="outlined">
                   Agregar respuesta anidada
+                </Button>
+                <Button variant="outlined" color="error">
+                  Eliminar respuestas
                 </Button>
               </Stack>
             </Box>
@@ -207,12 +207,59 @@ const Chats = () => {
                     margin="normal"
                   />
 
-                  <Stack spacing={2} marginTop={2}>
+                  <Stack spacing={2} marginTop={2} direction="row">
+                    <Button onClick={addNode} variant="outlined">
+                      Agregar respuesta anidada
+                    </Button>
                     <Button variant="outlined" color="error">
                       Eliminar respuestas
                     </Button>
+                  </Stack>
+                </Box>
+              ))}
+
+
+
+
+            {chatFlow.flow.nodes[0].responses instanceof Array &&
+              chatFlow.flow.nodes[0].responses[0].responses.map((resp) => (
+                <Box
+                  key={resp.id}
+                  sx={{
+                    marginBottom: "20px",
+                    borderBottom: "1px solid #ccc",
+                    paddingBottom: "10px",
+                    marginLeft: `${marginLeftByResponse * 2}px`,
+
+                    width: 500,
+                    maxWidth: "100%",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "20px",
+                    left: "20",
+                  }}
+                >
+                  <TextField
+                    fullWidth
+                    label="Respuesta"
+                    defaultValue={resp.type}
+                    variant="standard"
+                    margin="normal"
+                  />
+                  <TextField
+                    fullWidth
+                    defaultValue={resp.type}
+                    label="Entrada"
+                    variant="standard"
+                    margin="normal"
+                  />
+
+                  <Stack spacing={2} marginTop={2} direction="row">
                     <Button onClick={addNode} variant="outlined">
                       Agregar respuesta anidada
+                    </Button>
+                    <Button variant="outlined" color="error">
+                      Eliminar respuestas
                     </Button>
                   </Stack>
                 </Box>
@@ -245,11 +292,11 @@ const Chats = () => {
           margin="normal"
         />
 
-        <Stack spacing={2} marginTop={2}>
-          <Button variant="outlined" color="error">
-            Eliminar respuesta Anidada
-          </Button>
+        <Stack spacing={2} marginTop={2} direction="row">
           <Button variant="outlined">Agregar respuesta anidada</Button>
+          <Button variant="outlined" color="error">
+            Eliminar respuestas
+          </Button>
         </Stack>
       </Box>
 
