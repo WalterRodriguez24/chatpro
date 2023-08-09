@@ -16,15 +16,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const navegation = useNavigate()
-
+  const navegation = useNavigate();
 
   const paperStyle = {
-    padding: 20,  
+    padding: 20,
     height: "70vh",
     width: 280,
     margin: "20px auto",
@@ -51,25 +49,19 @@ const Login = () => {
         password,
       })
       .then((response) => {
-
-        console.log(response.data)
+        console.log(response.data);
         if (response.data.ok) {
-          localStorage.setItem('token' , response.data.token)
-          navegation("/menu")
+          localStorage.setItem("token", response.data.token);
+          navegation("/menu");
         } else {
           setErrorMessage("Nombre de usuario o contraseña incorrectos");
         }
-
       })
       .catch((error) => {
         console.error("Credenciales incorrectas:", error);
         setErrorMessage("Credenciales incorrectas");
       });
-
-
-      
   };
- 
 
   return (
     <Grid>
@@ -81,7 +73,6 @@ const Login = () => {
           <h2>Chat Pro</h2>
         </Grid>
         <form onSubmit={handleSubmit}>
-
           <TextField
             label="Username"
             placeholder="Enter username"

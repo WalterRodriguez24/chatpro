@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useState } from "react";
+/* eslint-disable react/prop-types */
 import { createContext } from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 
@@ -12,20 +11,6 @@ const generateId = () => {
 export const KEY_CHAT_NODES = "chatNodes";
 
 export function ChatContextProvider({ children, initialNode }) {
-  /*   const [mainNode, setMainNode] = useState(() => {
-    const chatNodes = window.localStorage.getItem(KEY_CHAT_NODES);
-
-    if (chatNodes) {
-      return JSON.parse(chatNodes);
-    }
-
-    return initialNode;
-  });
-
-  useEffect(() => {
-    window.localStorage.setItem(KEY_CHAT_NODES, JSON.stringify(mainNode));
-  }, [mainNode]); */
-
   const [mainNode, setMainNode] = useLocalStorage(KEY_CHAT_NODES, initialNode);
 
   function addNode(nodeId, position) {
@@ -84,8 +69,15 @@ export function ChatContextProvider({ children, initialNode }) {
     setMainNode(newMainNode);
   }
 
+  function setIdNodeProject(nodeId) {
+    const newMainNode = Object.assign(mainNode, { id: nodeId });
+    setMainNode(newMainNode);
+  }
+
   return (
-    <ChatContext.Provider value={{ mainNode, addNode, deleteNode }}>
+    <ChatContext.Provider
+      value={{ mainNode, addNode, deleteNode, setIdNodeProject }}
+    >
       {children}
     </ChatContext.Provider>
   );
