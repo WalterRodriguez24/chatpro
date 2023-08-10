@@ -15,6 +15,8 @@ import Chats from "../components/Chats";
 import { Save } from "@mui/icons-material";
 import { useChatContext } from "../hooks/useChatContext";
 import useLocalStorage from "../hooks/useLocalStorage";
+import 'react-toastify/dist/ReactToastify.css';
+import { toast,ToastContainer } from "react-toastify";
 
 const Dashboard = () => {
   // Importas toastity
@@ -35,6 +37,8 @@ const Dashboard = () => {
   const [nameProject, setNameProject] = useState("");
   const [getProjectLocalStorage, setGetProjectLocalStorage] = useState([]);
 
+  const  [validationError, setvalidationError] = useState(false);
+
   const style = {
     position: "absolute",
     top: "50%",
@@ -48,6 +52,7 @@ const Dashboard = () => {
     textAlign: "center",
   };
 
+
   const handleChangeProjectSelected = (event) => {
     setProyectSelected(event.target.value);
   };
@@ -58,8 +63,12 @@ const Dashboard = () => {
       nameProject == "" ||
       nameProject.trim() == ""
     ) {
-      console.log("No se puede guardar un proyecto sin nombre");
-      return;
+
+    
+      setvalidationError(true);
+      toast.error('No se puede guardar un proyecto sin nombre');
+      return
+      
     }
 
     const newMainNode = Object.assign(mainNode, { name: nameProject });
@@ -71,6 +80,8 @@ const Dashboard = () => {
     setGetProjectLocalStorage([...getProjects, newMainNode]);
     setShowModalSetNameProject(false);
     setShowChatNode(false);
+
+    toast.success('Proyecto guardado exitosamente')
   };
 
   const onLoadProject = () => {
@@ -256,12 +267,16 @@ const Dashboard = () => {
             Establece el nombre del proyecto
           </Typography>
           <br />
-          <br />
           <TextField
             id="standard-basic"
             label="Nombre del proyecto"
             variant="standard"
-            onChange={(e) => setNameProject(e.target.value)}
+            onChange={(e) => {
+              setNameProject(e.target.value);
+              setvalidationError(false)
+            }}
+            error={validationError}
+            helperText={validationError ? 'ingrese un nombre valido ':''}
           />
           <br />
           <br />
@@ -274,6 +289,11 @@ const Dashboard = () => {
           >
             Guardar proyecto
           </Button>
+          <ToastContainer  position="top-right"
+          hideProgressBar
+          newestOnTop
+          closeOnClick/>
+
         </Box>
       </Modal>
 
