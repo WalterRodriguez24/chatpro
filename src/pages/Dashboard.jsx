@@ -15,8 +15,8 @@ import Chats from "../components/Chats";
 import { Save } from "@mui/icons-material";
 import { useChatContext } from "../hooks/useChatContext";
 import useLocalStorage from "../hooks/useLocalStorage";
-import 'react-toastify/dist/ReactToastify.css';
-import { toast,ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from "react-toastify";
 
 const Dashboard = () => {
   // Importas toastity
@@ -24,6 +24,7 @@ const Dashboard = () => {
   const [, setValueNodeCurrent] = useLocalStorage("chatNodes", []);
   // Cualquier cosa
   const [proyectSelected, setProyectSelected] = useState("");
+
   const [showChatNode, setShowChatNode] = useState(false);
 
   // Modals
@@ -37,7 +38,7 @@ const Dashboard = () => {
   const [nameProject, setNameProject] = useState("");
   const [getProjectLocalStorage, setGetProjectLocalStorage] = useState([]);
 
-  const  [validationError, setvalidationError] = useState(false);
+  const [validationError, setvalidationError] = useState(false);
 
   const style = {
     position: "absolute",
@@ -52,7 +53,6 @@ const Dashboard = () => {
     textAlign: "center",
   };
 
-
   const handleChangeProjectSelected = (event) => {
     setProyectSelected(event.target.value);
   };
@@ -63,12 +63,9 @@ const Dashboard = () => {
       nameProject == "" ||
       nameProject.trim() == ""
     ) {
-
-    
       setvalidationError(true);
-      toast.error('No se puede guardar un proyecto sin nombre');
-      return
-      
+      toast.error("No se puede guardar un proyecto sin nombre");
+      return;
     }
 
     const newMainNode = Object.assign(mainNode, { name: nameProject });
@@ -81,7 +78,7 @@ const Dashboard = () => {
     setShowModalSetNameProject(false);
     setShowChatNode(false);
 
-    toast.success('Proyecto guardado exitosamente')
+    toast.success("Proyecto guardado exitosamente");
   };
 
   const onLoadProject = () => {
@@ -96,6 +93,28 @@ const Dashboard = () => {
     const getProjects = JSON.parse(localStorage.getItem("projects")) || [];
     setGetProjectLocalStorage(getProjects);
   }, []);
+
+  
+
+  const onUpdateProyect = (proyect) => {
+    const chats = JSON.parse(localStorage.getItem("chats")) || [];
+
+   
+
+    let chatExistente = chats.find((chat) => chat.name === proyect);
+
+    if (chatExistente) {
+      chatExistente = mainNode;
+      chatExistente.name=proyect
+    } else {
+      chats.push(mainNode);
+    }
+
+    localStorage.setItem("chats", JSON.stringify(chats));
+
+  };
+
+
 
   return (
     <Box
@@ -193,7 +212,13 @@ const Dashboard = () => {
           Mostrar respuestas
         </Button>
         <Button
-          onClick={() => setShowModalSetNameProject(true)}
+          onClick={() => {
+            if (proyectSelected == "") {
+              setShowModalSetNameProject(true);
+            } else {
+              onUpdateProyect(proyectSelected);
+            }
+          }}
           variant="contained"
           size="large"
           sx={{
@@ -273,10 +298,10 @@ const Dashboard = () => {
             variant="standard"
             onChange={(e) => {
               setNameProject(e.target.value);
-              setvalidationError(false)
+              setvalidationError(false);
             }}
             error={validationError}
-            helperText={validationError ? 'ingrese un nombre valido ':''}
+            helperText={validationError ? "ingrese un nombre valido " : ""}
           />
           <br />
           <br />
@@ -287,13 +312,15 @@ const Dashboard = () => {
             onClick={onSaveProject}
             required
           >
+            {/* toast.success('Guardado con éxito') */}
             Guardar proyecto
           </Button>
-          <ToastContainer  position="top-right"
-          hideProgressBar
-          newestOnTop
-          closeOnClick/>
-
+          <ToastContainer
+            position="top-right"
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+          />
         </Box>
       </Modal>
 
