@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useContext } from "react";
+import {ChatContext} from '../components/ChatContext'
 import {
   Box,
   InputLabel,
@@ -94,6 +96,8 @@ const Dashboard = () => {
     setGetProjectLocalStorage(getProjects);
   }, []);
 
+
+  
   
 
   const onUpdateProyect = (proyect) => {
@@ -113,6 +117,20 @@ const Dashboard = () => {
     localStorage.setItem("chats", JSON.stringify(chats));
 
   };
+
+
+  const { updateNodeContent } = useContext(ChatContext);
+  const [newQuestion, setNewQuestion] = useState('');
+
+  const handleUpdate = () => {
+    const newNodeContent = { 
+      question: newQuestion, 
+    };
+
+    updateNodeContent("lkobes9teswuq8kyouf", newNodeContent);
+  };
+
+
 
 
 
@@ -229,6 +247,25 @@ const Dashboard = () => {
         >
           Guardar
         </Button>
+        <input
+        type="text"
+        value={newQuestion}
+        onChange={(e) => setNewQuestion(e.target.value)}
+        placeholder="nueva pregunta principal"
+        />
+        <Button
+          onClick={handleUpdate}
+          variant="contained"
+          size="large"
+          sx={{
+            bgcolor: "skyblue",
+            color: "#fff",
+            "&:hover": { bgcolor: "#0288d1" },
+          }}
+        >
+          Actualizar nodo
+        </Button>
+        <pre>{JSON.stringify(updateNodeContent, null , 2)}</pre>
         <Button
           onClick={() => setShowModalWhatsap(true)}
           variant="contained"

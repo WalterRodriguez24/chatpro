@@ -24,9 +24,7 @@ import { useChatContext } from "../hooks/useChatContext";
 
 const MARGIN_LEFT_BY_RESPONSE = 50;
 
-const generateId = () => {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-};
+
 
 export default function NodeChat(props) {
   const { onNodeAdd, onNodeDelete, node, nestedLevel = 0, isNested } = props;

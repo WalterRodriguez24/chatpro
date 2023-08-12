@@ -13,6 +13,7 @@ export const KEY_CHAT_NODES = "chatNodes";
 export function ChatContextProvider({ children, initialNode }) {
   const [mainNode, setMainNode] = useLocalStorage(KEY_CHAT_NODES, initialNode);
 
+
   function addNode(nodeId, position) {
     const newMainNode = JSON.parse(JSON.stringify(mainNode));
 
@@ -74,9 +75,36 @@ export function ChatContextProvider({ children, initialNode }) {
     setMainNode(newMainNode);
   }
 
+
+  
+  /**
+   * Actualiza el contenido de un nodo específico.
+   * 
+   * @param {string} nodeId - El ID del nodo a actualizar.
+   * @param {Object} newData - Los nuevos datos para el nodo.
+   */
+  function updateNodeContent(nodeId, newData) {
+    const recursivelyUpdateNode = (node) => {
+      if (node.id === nodeId) {
+        return { ...node, ...newData };
+      }
+
+      if (node.responses && node.responses.length > 0) {
+        const updatedResponses = node.responses.map(recursivelyUpdateNode);
+        return { ...node, responses: updatedResponses };
+      }
+
+      return node;
+    };
+
+    const updatedMainNode = recursivelyUpdateNode(mainNode);
+    setMainNode(updatedMainNode);
+  }
+
+
   return (
     <ChatContext.Provider
-      value={{ mainNode, addNode, deleteNode, setIdNodeProject }}
+    value={{ mainNode, addNode, deleteNode, setIdNodeProject, updateNodeContent }}
     >
       {children}
     </ChatContext.Provider>
