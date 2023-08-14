@@ -30,6 +30,7 @@ export function ChatContextProvider({ children, initialNode }) {
           responses: [],
         };
 
+
         if (position === "start") {
           node.responses.unshift(newNode);
         } else if (position === "after") {
@@ -46,6 +47,7 @@ export function ChatContextProvider({ children, initialNode }) {
     recursivelyAddNode(newMainNode);
     setMainNode(newMainNode);
   }
+  
 
   function deleteNode(nodeId) {
     const newMainNode = JSON.parse(JSON.stringify(mainNode));
@@ -101,10 +103,14 @@ export function ChatContextProvider({ children, initialNode }) {
     setMainNode(updatedMainNode);
   }
 
+  function setnode(node) {
+setMainNode(node)
+  }
+
 
   return (
     <ChatContext.Provider
-    value={{ mainNode, addNode, deleteNode, setIdNodeProject, updateNodeContent }}
+    value={{ mainNode, addNode, deleteNode, setIdNodeProject, updateNodeContent,setnode }}
     >
       {children}
     </ChatContext.Provider>

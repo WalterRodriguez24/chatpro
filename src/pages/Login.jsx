@@ -49,7 +49,6 @@ const Login = () => {
         password,
       })
       .then((response) => {
-        console.log(response.data);
         if (response.data.ok) {
           localStorage.setItem("token", response.data.token);
           navegation("/menu");

@@ -1,5 +1,5 @@
 import { Box, Button, Collapse, Stack, TextField } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useChatContext } from "../hooks/useChatContext";
 
 /**
@@ -24,16 +24,18 @@ import { useChatContext } from "../hooks/useChatContext";
 
 const MARGIN_LEFT_BY_RESPONSE = 50;
 
-
-
 export default function NodeChat(props) {
   const { onNodeAdd, onNodeDelete, node, nestedLevel = 0, isNested } = props;
   const mainLabel = node.type === "main" ? "Pregunta" : "Respuesta";
 
   const [open, setOpen] = useState(true);
 
-  const { addNode, deleteNode } = useChatContext();
+  const { addNode, deleteNode, updateNodeContent } = useChatContext();
 
+  // const [question, setquestion] = useState(node.question || node.response || "");
+  // const [answer, setanswer] = useState(node.entry || "");
+
+  
   const handleClick = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -52,15 +54,22 @@ export default function NodeChat(props) {
       }
     : {};
 
+
+
+
+
+
   function handleNodeAdd() {
     addNode(node.id);
   }
+
 
   function handleNodeDelete() {
     deleteNode(node.id);
   }
 
   if (nestedLevel > 10) return <div>Maximo nivel es 10</div>;
+
 
   return (
     <>
@@ -78,14 +87,26 @@ export default function NodeChat(props) {
         <TextField
           fullWidth
           label={mainLabel}
-          defaultValue={node.question}
+          defaultValue={node.question || node.entry}
+          onChange={(e) => {
+
+            const newentry = e.target.value
+            if(nestedLevel==0){
+              updateNodeContent(node.id, {question:newentry})
+            }else{
+              updateNodeContent(node.id, {entry:newentry})
+            }
+          }}
           variant="standard"
           margin="normal"
         />
         <TextField
           fullWidth
           label="Entrada"
-          defaultValue={node.entry}
+          defaultValue={node.response}
+          onChange={(e) => {
+            updateNodeContent(node.id, {response: e.target.value});
+          }}
           variant="standard"
           margin="normal"
         />

@@ -18,23 +18,13 @@ const generateNodeId = () => {
 };
 
 const Chats = () => {
-  const { mainNode, setIdNodeProject } = useChatContext();
-  const [nodeId, setNodeId] = useState("");
+  const { mainNode } = useChatContext();
 
   if (!mainNode) {
     return <h1>No hay respuesta</h1>;
   }
 
-  useEffect(() => {
-    const nodeIdGenerated = generateNodeId();
-    setNodeId(nodeIdGenerated);
-    setIdNodeProject(nodeIdGenerated);
-  }, [setIdNodeProject]);
-
-  if (!nodeId) {
-    return <h1>Loading...</h1>;
-  }
-
+ 
   return (
     <Box
       sx={{
@@ -43,7 +33,7 @@ const Chats = () => {
         padding: "20px",
       }}
     >
-      <h1 style={{ marginBottom: "20px" }}>Nodo ID: {nodeId}</h1>
+      <h1 style={{ marginBottom: "20px" }}>Nodo ID: {mainNode.id}</h1>
 
       {mainNode.responses.map((resp) => (
         <NodeChat key={resp.id} node={resp} />

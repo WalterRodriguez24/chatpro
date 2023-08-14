@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useContext } from "react";
-import {ChatContext} from '../components/ChatContext'
+import {mappedData} from '../data/chatData'
 import {
   Box,
   InputLabel,
@@ -20,10 +19,12 @@ import useLocalStorage from "../hooks/useLocalStorage";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
 
+const PROJECTS = "proyecto";
+
 const Dashboard = () => {
   // Importas toastity
 
-  const [, setValueNodeCurrent] = useLocalStorage("chatNodes", []);
+  const [projetcs, setProjetcs] = useLocalStorage(PROJECTS, []);
   // Cualquier cosa
   const [proyectSelected, setProyectSelected] = useState("");
 
@@ -34,11 +35,26 @@ const Dashboard = () => {
   const [showModalSetNameProject, setShowModalSetNameProject] = useState(false);
 
   // Context
-  const { mainNode } = useChatContext();
+  const { mainNode, setnode } = useChatContext();
+
+  useEffect(() => {
+    const proyectData = projetcs.find(
+      (project) => project.name == proyectSelected
+    );
+    
+    if (!proyectData) {
+      setnode(mappedData[0]);
+      return
+    }
+    setnode(proyectData);
+    setShowChatNode(false);
+
+  }, [proyectSelected, projetcs]);
+  
 
   // Values
   const [nameProject, setNameProject] = useState("");
-  const [getProjectLocalStorage, setGetProjectLocalStorage] = useState([]);
+  // const [getProjectLocalStorage, setGetProjectLocalStorage] = useState([]);
 
   const [validationError, setvalidationError] = useState(false);
 
@@ -60,76 +76,50 @@ const Dashboard = () => {
   };
 
   const onSaveProject = () => {
-    if (
-      nameProject.length == 0 ||
-      nameProject == "" ||
-      nameProject.trim() == ""
-    ) {
-      setvalidationError(true);
-      toast.error("No se puede guardar un proyecto sin nombre");
-      return;
+    
+
+    const proyectData = projetcs.find(
+      (project) => project.name == proyectSelected
+    );
+    console.log({proyectData})
+    if (proyectData) {
+      setProjetcs(
+        projetcs.map((projetc) => {
+          if (projetc.name === proyectData.name) {
+            return mainNode;
+          }
+          return projetc;
+        })
+      );
+    } else {
+      const newMainNode = Object.assign(mainNode, { name: nameProject ,id:window.crypto.randomUUID()});
+      if (
+        nameProject.length == 0 ||
+        nameProject == "" ||
+        nameProject.trim() == ""
+      ) {
+        setvalidationError(true);
+        toast.error("No se puede guardar un proyecto sin nombre");
+        return;
+      }
+      setProjetcs([...projetcs, newMainNode])
+      ;
     }
 
-    const newMainNode = Object.assign(mainNode, { name: nameProject });
-    const getProjects = JSON.parse(localStorage.getItem("projects")) || [];
-    localStorage.setItem(
-      "projects",
-      JSON.stringify([...getProjects, newMainNode])
-    );
-    setGetProjectLocalStorage([...getProjects, newMainNode]);
     setShowModalSetNameProject(false);
     setShowChatNode(false);
 
     toast.success("Proyecto guardado exitosamente");
   };
 
-  const onLoadProject = () => {
-    const getProjects = JSON.parse(localStorage.getItem("projects")) || [];
-    const proyectSelectedInLocalStorage = getProjects.find(
-      (project) => project.name == proyectSelected
-    );
-    setValueNodeCurrent(proyectSelectedInLocalStorage);
-  };
 
-  useEffect(() => {
-    const getProjects = JSON.parse(localStorage.getItem("projects")) || [];
-    setGetProjectLocalStorage(getProjects);
-  }, []);
-
-
-  
-  
-
-  const onUpdateProyect = (proyect) => {
-    const chats = JSON.parse(localStorage.getItem("chats")) || [];
-
-   
-
-    let chatExistente = chats.find((chat) => chat.name === proyect);
-
-    if (chatExistente) {
-      chatExistente = mainNode;
-      chatExistente.name=proyect
-    } else {
-      chats.push(mainNode);
+  const onDelete = ()=> {
+    console.log({projetcs,proyectSelected})
+    setProjetcs(projetcs.filter((proyect)=>proyect.name!=proyectSelected))
+    setShowModalSetNameProject(false);
+    setShowChatNode(false);
+    
     }
-
-    localStorage.setItem("chats", JSON.stringify(chats));
-
-  };
-
-
-  const { updateNodeContent } = useContext(ChatContext);
-  const [newQuestion, setNewQuestion] = useState('');
-
-  const handleUpdate = () => {
-    const newNodeContent = { 
-      question: newQuestion, 
-    };
-
-    updateNodeContent("lkobes9teswuq8kyouf", newNodeContent);
-  };
-
 
 
 
@@ -154,7 +144,7 @@ const Dashboard = () => {
             label="Age"
             onChange={handleChangeProjectSelected}
           >
-            {getProjectLocalStorage.map((project) => (
+            {projetcs.map((project) => (
               <MenuItem key={project.id} value={project.name}>
                 {project.name}
               </MenuItem>
@@ -168,9 +158,10 @@ const Dashboard = () => {
         <Button
           onClick={() => {
             setShowChatNode(true);
-            onLoadProject();
+            // onLoadProject();
           }}
           variant="contained"
+          disabled = {proyectSelected.length===0}
           size="large"
           sx={{
             bgcolor: "green",
@@ -183,6 +174,8 @@ const Dashboard = () => {
         <Button
           variant="contained"
           size="large"
+          disabled = {proyectSelected.length===0}
+          onClick={onDelete}
           sx={{
             bgcolor: "red",
             color: "#fff",
@@ -207,7 +200,12 @@ const Dashboard = () => {
       {/* Segunda fila */}
       <Stack direction="row" spacing={2} justifyContent="left" marginTop="20px">
         <Button
-          onClick={() => setShowChatNode(!showChatNode)}
+          onClick={() => {setShowChatNode(false)
+            setTimeout(()=>{
+              setShowChatNode(true)
+            },500)
+            setProyectSelected('')
+          }}
           variant="contained"
           size="large"
           sx={{
@@ -231,10 +229,11 @@ const Dashboard = () => {
         </Button>
         <Button
           onClick={() => {
+            console.log(proyectSelected)
             if (proyectSelected == "") {
               setShowModalSetNameProject(true);
-            } else {
-              onUpdateProyect(proyectSelected);
+            }else{
+              onSaveProject()
             }
           }}
           variant="contained"
@@ -247,25 +246,7 @@ const Dashboard = () => {
         >
           Guardar
         </Button>
-        <input
-        type="text"
-        value={newQuestion}
-        onChange={(e) => setNewQuestion(e.target.value)}
-        placeholder="nueva pregunta principal"
-        />
-        <Button
-          onClick={handleUpdate}
-          variant="contained"
-          size="large"
-          sx={{
-            bgcolor: "skyblue",
-            color: "#fff",
-            "&:hover": { bgcolor: "#0288d1" },
-          }}
-        >
-          Actualizar nodo
-        </Button>
-        <pre>{JSON.stringify(updateNodeContent, null , 2)}</pre>
+
         <Button
           onClick={() => setShowModalWhatsap(true)}
           variant="contained"
