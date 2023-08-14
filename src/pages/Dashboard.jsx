@@ -9,6 +9,7 @@ import {
   Stack,
   Button,
   TextField,
+  
 } from "@mui/material";
 import { Modal, Typography } from "@mui/material";
 import qrsvg from "../img/descarga.svg";
@@ -92,19 +93,26 @@ const Dashboard = () => {
         })
       );
     } else {
-      const newMainNode = Object.assign(mainNode, { name: nameProject ,id:window.crypto.randomUUID()});
       if (
         nameProject.length == 0 ||
         nameProject == "" ||
-        nameProject.trim() == ""
-      ) {
+        nameProject.trim() == ""       ) 
+        {
         setvalidationError(true);
         toast.error("No se puede guardar un proyecto sin nombre");
         return;
       }
-      setProjetcs([...projetcs, newMainNode])
-      ;
+      if (projetcs.some((project) => project.name === nameProject)) {
+        setvalidationError(true);
+        toast.error("Ya existe un proyecto con este nombre");
+        return;
+      }
+
+      
+      const newMainNode = Object.assign(mainNode, { name: nameProject ,id:window.crypto.randomUUID()});
+      setProjetcs([...projetcs, newMainNode]);
     }
+  
 
     setShowModalSetNameProject(false);
     setShowChatNode(false);
@@ -229,8 +237,7 @@ const Dashboard = () => {
         </Button>
         <Button
           onClick={() => {
-            console.log(proyectSelected)
-            if (proyectSelected == "") {
+           if (proyectSelected == "") {
               setShowModalSetNameProject(true);
             }else{
               onSaveProject()
